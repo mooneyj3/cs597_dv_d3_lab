@@ -4,6 +4,13 @@ let dataset = [];
 let x, y;
 let pop;
 
+// next class, use our own data set from our own project and make that work
+
+/*
+ * Tasks for this:
+ *
+ */
+
 var div = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
@@ -59,7 +66,7 @@ d3.tsv("data/france.tsv")
 
         pop = d3.scaleLinear()
             .domain(d3.extent(rows, (row) => row.population))
-            .range([1,25]);
+            .range([1,40]);
 
         draw();
 
@@ -82,17 +89,27 @@ function draw() {
         .attr("cx", (d) => x(d.longitude))
         .attr("cy", (d) => y(d.latitude))
         .style("opacity", 0.25)
-        .style("fill", "#f46d43")
+        .style("fill", "#2b49fd")
         .on("mouseover", function(d) {
+            d3.select(this)
+                .style("fill", "#d220fd")
+                .style("opacity", 0.9)
+                .attr("r", (d) => 1.2 * pop(d.population));
             div.transition()
                 .duration(200)
                 .style("opacity", .9);
-            div.html(d.latitude + ", " + d.longitude + "<br/>" + d.population)
+            div.html(d.place + "<br/>" +
+                     "pop: " + d.population )
                 .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
-            // div.html(formatTime(d.date) + "<br/>" + d.close)
-            //     .style("left", (d3.event.pageX) + "px")
-            //     .style("top", (d3.event.pageY - 28) + "px");
+        })
+        .on("mouseout", function(d) {
+            d3.select(this)
+                .style("fill", "#2b49fd")
+                .style("opacity", 0.25)
+                .attr("r", (d) => pop(d.population));
+            div.transition()
+                .style("opacity", 0);
         })
     ;
     svg.append("g")
